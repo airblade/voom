@@ -4,7 +4,7 @@ voom is a simplest-thing-that-works way to manage your Vim plugins.  It's defini
 
 It assumes:
 
-- The plugins you use are on GitHub.
+- The plugins you use are on GitHub (or in-progress on disk).
 - You use [Pathogen][] to manage Vim's runtime path.
 
 
@@ -55,6 +55,15 @@ $ voom outdated
 ```
 
 Again, you can pass a plugin name if you just want to focus on a single plugin.
+
+
+## What About Plugins I'm Hacking On?
+
+If you're working on a plugin, you don't want to install it from GitHub; you want to use your local copy.  To do this, manually symlink your plugin into `bundle/`.  There's no need to add it to `repos`.  E.g.
+
+```sh
+$ ln -nfs ~/code/src/vim-newhotness ~/dotvim/bundle/vim-newhotness
+```
 
 
 ## Installation
