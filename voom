@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+#
+# Script to manage my Vim plugins, listed in the file `sources`.
+# Designed to work with vim-pathogen.
+#
+# The workflow is:
+#
+# 1. Update `sources` by hand.
+# 2. Run this script.
+#
+# This is one step too many: I should roll (1) into (2).
+#
+#
+# SYNOPSIS
+#
+#   voom install|outdated|updated|clean [name]
+#
+#
+# OPTIONS
+#
+#   install
+#       Installs any plugins listed in `repos` which aren't already installed.
+#
+#   outdated [name]
+#       Lists any plugins which aren't up to date.  If `name` is given, consider
+#       only the named plugin.
+#
+#   update [name]
+#       Updates any plugins which aren't up to date.  If `name` is given, update
+#       only the named plugin.
+#
+#   clean
+#       Uninstall any plugins not listed in `repos`.
+#
+
+
+set -e
+
+VIM_DIR=~/dotvim
+REPOS="$VIM_DIR/repos"
+SOURCES_DIR="$VIM_DIR/src"
+BUNDLE_DIR="$VIM_DIR/bundle"
+COMMENT='^#'
+action="$1"
+
+
+test -f "$REPOS" || {
+  echo >&2 "Could not locate '$REPOS'."
+  exit 1
+}
+
+case $action in
+install)
+  [ -d "$SOURCES_DIR" ] || mkdir "$SOURCES_DIR"
+
+  while read line
+  do
+    ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && continue
+
+    plugin_name=${line##*/}
+
+    [ -L "$BUNDLE_DIR/$plugin_name" ] || {
+      [ -d "$SOURCES_DIR/$plugin_name" ] || git clone "https://github.com/$line.git" "$SOURCES_DIR/$plugin_name" >/dev/null 2>&1
+      ln -nfs "$SOURCES_DIR/$plugin_name" "$BUNDLE_DIR/$plugin_name"
+      echo "installed $plugin_name"
+    }
+  done < "$REPOS"
+  ;;
+
+outdated)
+  for dir in $SOURCES_DIR/*; do
+    cd $dir
+    plugin_name=${dir##*/}
+
+    [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
+
+    upstream=$(git rev-parse origin/master)
+    installed=$(git rev-parse master)
+    [ "$upstream" == "$installed" ] || {
+      echo "outdated $plugin_name:"
+      git log --pretty=format:"    %h %s" $installed..$upstream
+    }
+  done
+  ;;
+
+update)
+  for dir in $SOURCES_DIR/*; do
+    cd $dir
+    plugin_name=${dir##*/}
+
+    [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
+
+    upstream=$(git rev-parse origin/master)
+    installed=$(git rev-parse master)
+    [ "$upstream" == "$installed" ] || {
+      git pull -q
+      echo "updated $plugin_name:"
+      git log --pretty=format:"    %h %s" $installed..$upstream
+    }
+  done
+  ;;
+
+clean)
+  for dir in $SOURCES_DIR/*; do
+    plugin_name=${dir##*/}
+    (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
+      rm "$BUNDLE_DIR/$plugin_name"
+      rm -rf $dir
+      echo "uninstalled $plugin_name"
+    }
+  done
+  ;;
+
+*)
+  echo >&2 "Usage: $0 <install|update|outdated|clean> [name]"
+  exit 1
+  ;;
+esac
+
