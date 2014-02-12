@@ -1,11 +1,19 @@
 # voom: a Vim plugin manager
 
-voom is a simplest-thing-that-works way to manage your Vim plugins.  It's definitely simpler than git submodules.
+voom is a simplest-thing-that-works way to manage your Vim plugins.
 
 It assumes:
 
 - The plugins you use are on GitHub (or in-progress on disk).
 - You use [Pathogen][] to manage Vim's runtime path.
+
+voom is an alternative to [Vundle][], [NeoBundler][], [vam][], etc.
+
+Features:
+
+* Fast.
+* Lightweight (<100 lines bash).
+* No git submodules :)
 
 
 ## How Does It Work?
@@ -83,3 +91,6 @@ Declare your plugins in `plugins` and add the file to your repo.
 - Support SHAs in plugin declarations in `plugins`.  E.g. `foo/bar@abc123`.
 
   [pathogen]: https://github.com/tpope/vim-pathogen
+  [vundle]: https://github.com/gmarik/vundle.vim
+  [NeoBundle]: https://github.com/Shougo/neobundle.vim
+  [vam]: https://github.com/MarcWeber/vim-addon-manager

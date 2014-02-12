@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 #
-# Script to manage my Vim plugins, listed in the file `plugins`.
-# Designed to work with vim-pathogen.
+# A Vim plugin manager designed to work with vim-pathogen.
 #
 # The workflow is:
 #
