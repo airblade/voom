@@ -7,7 +7,7 @@ It assumes:
 - The plugins you use are on GitHub (or in-progress on disk).
 - You use [Pathogen][] to manage Vim's runtime path.
 
-voom is an alternative to [Vundle][], [NeoBundler][], [vam][], etc.
+voom is an alternative to [Vundle][], [NeoBundle][], [vam][], etc.
 
 Features:
 
@@ -65,13 +65,15 @@ $ voom outdated
 Again, you can pass a plugin name if you just want to focus on a single plugin.
 
 
-## What About Plugins I'm Hacking On?
+## What About Plugins You're Hacking On?
 
-If you're working on a plugin, you don't want to install it from GitHub; you want to use your local copy.  To do this, manually symlink your plugin into `bundle/`.  There's no need to add it to `plugins`.  E.g.
+If you're working on a plugin, you don't want to install it from GitHub; you want to use your local copy.  To do this, manually symlink your plugin into `bundle/`:
 
 ```sh
 $ ln -nfs ~/code/src/vim-newhotness ~/dotvim/bundle/vim-newhotness
 ```
+
+There's no need to add it to `plugins`.
 
 
 ## Installation
@@ -94,3 +96,9 @@ Declare your plugins in `plugins` and add the file to your repo.
   [vundle]: https://github.com/gmarik/vundle.vim
   [NeoBundle]: https://github.com/Shougo/neobundle.vim
   [vam]: https://github.com/MarcWeber/vim-addon-manager
+
+
+## Intellectual Property
+
+Copyright Andrew Stewart.  Released under the MIT licence.
+
