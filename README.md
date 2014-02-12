@@ -10,7 +10,7 @@ It assumes:
 
 ## How Does It Work?
 
-You declare your plugins in `repos`, a plain-text file you add to your dotvim repo.  Here's an example:
+You declare your plugins in `plugins`, a plain-text file you add to your dotvim repo.  Here's an example:
 
 ```
 # Comments start with a hash character.
@@ -28,9 +28,9 @@ Now you can install your plugins with:
 $ voom install
 ```
 
-This clones each plugin declared in `repos` into `~/dotvim/src` and symlinks each to `~/dotvim/bundle/`.
+This clones each plugin declared in `plugins` into `~/dotvim/src` and symlinks each to `~/dotvim/bundle/`.
 
-To uninstall a plugin, remove it from `repos` and run:
+To uninstall a plugin, remove it from `plugins` and run:
 
 ```sh
 $ voom clean
@@ -59,7 +59,7 @@ Again, you can pass a plugin name if you just want to focus on a single plugin.
 
 ## What About Plugins I'm Hacking On?
 
-If you're working on a plugin, you don't want to install it from GitHub; you want to use your local copy.  To do this, manually symlink your plugin into `bundle/`.  There's no need to add it to `repos`.  E.g.
+If you're working on a plugin, you don't want to install it from GitHub; you want to use your local copy.  To do this, manually symlink your plugin into `bundle/`.  There's no need to add it to `plugins`.  E.g.
 
 ```sh
 $ ln -nfs ~/code/src/vim-newhotness ~/dotvim/bundle/vim-newhotness
@@ -74,12 +74,12 @@ Empty your `~/dotvim/bundle/` directory and add `bundle/` to `.gitignore`.
 
 Create the `~/dotvim/src/` (or wherever) directory and add it to `.gitignore`.
 
-Declare your plugins in `repos` and add the file to your repo.
+Declare your plugins in `plugins` and add the file to your repo.
 
 
 ## To do (maybe)
 
-- Instead of (1) editing `repos` and (2) running `voom`, get `voom` to update `repos`.
-- Support SHAs in plugin declarations in `repos`.  E.g. `foo/bar@abc123`.
+- Instead of (1) editing `plugins` and (2) running `voom`, get `voom` to update `plugins`.
+- Support SHAs in plugin declarations in `plugins`.  E.g. `foo/bar@abc123`.
 
   [pathogen]: https://github.com/tpope/vim-pathogen

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 #
-# Script to manage my Vim plugins, listed in the file `sources`.
+# Script to manage my Vim plugins, listed in the file `plugins`.
 # Designed to work with vim-pathogen.
 #
 # The workflow is:
 #
-# 1. Update `sources` by hand.
+# 1. Update `plugins` by hand.
 # 2. Run this script.
 #
 # This is one step too many: I should roll (1) into (2).
@@ -19,7 +19,7 @@
 # OPTIONS
 #
 #   install
-#       Installs any plugins listed in `repos` which aren't already installed.
+#       Installs any plugins listed in `plugins` which aren't already installed.
 #
 #   outdated [name]
 #       Lists any plugins which aren't up to date.  If `name` is given, consider
@@ -30,14 +30,14 @@
 #       only the named plugin.
 #
 #   clean
-#       Uninstall any plugins not listed in `repos`.
+#       Uninstall any plugins not listed in `plugins`.
 #
 
 
 set -e
 
 VIM_DIR=~/dotvim
-REPOS="$VIM_DIR/repos"
+REPOS="$VIM_DIR/plugins"
 SOURCES_DIR="$VIM_DIR/src"
 BUNDLE_DIR="$VIM_DIR/bundle"
 COMMENT='^#'
