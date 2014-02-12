@@ -73,6 +73,9 @@ outdated)
 
     [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
 
+    # Alternative approach: always do a `git fetch`.  This would allow me
+    # to echo a log of commits.
+
     upstream=$(git ls-remote --heads origin master | awk {'print $1'})
     installed=$(git rev-parse master)
     [ "$upstream" == "$installed" ] || {
