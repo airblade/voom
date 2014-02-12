@@ -73,11 +73,10 @@ outdated)
 
     [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
 
-    upstream=$(git rev-parse origin/master)
+    upstream=$(git ls-remote --heads origin | grep refs/heads/master | awk {'print $1'})
     installed=$(git rev-parse master)
     [ "$upstream" == "$installed" ] || {
-      echo "outdated $plugin_name:"
-      git log --pretty=format:"    %h %s" $installed..$upstream
+      echo "outdated $plugin_name"
     }
   done
   ;;
@@ -89,7 +88,7 @@ update)
 
     [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
 
-    upstream=$(git rev-parse origin/master)
+    upstream=$(git ls-remote --heads origin | grep refs/heads/master | awk {'print $1'})
     installed=$(git rev-parse master)
     [ "$upstream" == "$installed" ] || {
       git pull -q
