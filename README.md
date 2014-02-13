@@ -22,6 +22,7 @@ You declare your plugins in `plugins`, a plain-text file you add to your dotvim 
 
 ```
 # Comments start with a hash character.
+# Note the plugin declarations are case-sensitive.
 airblade/vim-gitgutter
 tpope/vim-fugitive
 ```
