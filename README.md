@@ -92,6 +92,7 @@ Declare your plugins in `plugins` and add the file to your repo.
 
 - Instead of (1) editing `plugins` and (2) running `voom`, get `voom` to update `plugins`.
 - Support SHAs in plugin declarations in `plugins`.  E.g. `foo/bar@abc123`.
+- Speed up `voom install` by passing `--depth 1` to `git clone`.
 
   [pathogen]: https://github.com/tpope/vim-pathogen
   [vundle]: https://github.com/gmarik/vundle.vim
