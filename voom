@@ -68,8 +68,9 @@ install_missing_plugins() {
 
   while read line
   do
-    install_plugin "$line"
+    install_plugin "$line" &
   done < "$REPOS"
+  wait
 }
 
 uninstall_unwanted_plugins() {
