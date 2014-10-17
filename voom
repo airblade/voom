@@ -100,8 +100,12 @@ update)
   done
   ;;
 
+help | --help | -h)
+  echo "Usage: $(basename $0) <update> [name]"
+  ;;
+
 *)
-  echo >&2 "Usage: $0 <update> [name]"
+  echo >&2 "Usage: $(basename $0) <update> [name]"
   exit 1
   ;;
 esac
