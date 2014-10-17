@@ -45,24 +45,30 @@ is_remote_repo() {
   [ "$count" -eq 1 ]
 }
 
+install_plugin() {
+  local line="$1"
+  ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && continue
+
+  local plugin_name=${line##*/}
+
+  [ -L "$BUNDLE_DIR/$plugin_name" ] || {
+    if is_remote_repo "$line"; then
+      [ -d "$SOURCES_DIR/$plugin_name" ] || git clone --depth 1 "https://github.com/$line.git" "$SOURCES_DIR/$plugin_name" >/dev/null 2>&1
+      ln -nfs "$SOURCES_DIR/$plugin_name" "$BUNDLE_DIR/$plugin_name"
+    else
+      ln -nfs "$line" "$BUNDLE_DIR/$plugin_name"
+    fi
+    echo "installed $plugin_name"
+  }
+}
+export -f install_plugin
+
 install_missing_plugins() {
   [ -d "$SOURCES_DIR" ] || mkdir "$SOURCES_DIR"
 
   while read line
   do
-    ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && continue
-
-    plugin_name=${line##*/}
-
-    [ -L "$BUNDLE_DIR/$plugin_name" ] || {
-      if is_remote_repo "$line"; then
-        [ -d "$SOURCES_DIR/$plugin_name" ] || git clone --depth 1 "https://github.com/$line.git" "$SOURCES_DIR/$plugin_name" >/dev/null 2>&1
-        ln -nfs "$SOURCES_DIR/$plugin_name" "$BUNDLE_DIR/$plugin_name"
-      else
-        ln -nfs "$line" "$BUNDLE_DIR/$plugin_name"
-      fi
-      echo "installed $plugin_name"
-    }
+    install_plugin "$line"
   done < "$REPOS"
 }
 
