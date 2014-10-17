@@ -20,10 +20,6 @@
 #   install
 #       Installs any plugins listed in `plugins` which aren't already installed.
 #
-#   outdated [name]
-#       Lists any plugins which aren't up to date.  If `name` is given, consider
-#       only the named plugin.
-#
 #   update [name]
 #       Updates any plugins which aren't up to date.  If `name` is given, update
 #       only the named plugin.
@@ -74,24 +70,6 @@ install)
       echo "installed $plugin_name"
     }
   done < "$REPOS"
-  ;;
-
-outdated)
-  for dir in $SOURCES_DIR/*; do
-    cd $dir
-    plugin_name=${dir##*/}
-
-    [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
-
-    # Alternative approach: always do a `git fetch`.  This would allow me
-    # to echo a log of commits.
-
-    upstream=$(git ls-remote --heads origin master | awk {'print $1'})
-    installed=$(git rev-parse master)
-    [ "$upstream" == "$installed" ] || {
-      echo "outdated $plugin_name"
-    }
-  done
   ;;
 
 update)

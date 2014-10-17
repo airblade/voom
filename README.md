@@ -62,14 +62,6 @@ If you just want to update one plugin:
 $ voom update vim-gitgutter
 ```
 
-Finally, to see which plugins are out of date (i.e. to see what would happen if you ran `voom update`):
-
-```sh
-$ voom outdated
-```
-
-Again, you can pass a plugin name if you just want to focus on a single plugin.
-
 
 ## Installation
 
