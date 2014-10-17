@@ -61,7 +61,6 @@ install_plugin() {
     echo "installed $plugin_name"
   }
 }
-export -f install_plugin
 
 install_missing_plugins() {
   [ -d "$SOURCES_DIR" ] || mkdir "$SOURCES_DIR"
