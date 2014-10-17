@@ -48,6 +48,12 @@ test -f "$REPOS" || {
   exit 1
 }
 
+is_remote_repo() {
+  local slashes="${1//[^\/]}"
+  local count="${#slashes}"
+  [ "$count" -eq 1 ]
+}
+
 case $action in
 install)
   [ -d "$SOURCES_DIR" ] || mkdir "$SOURCES_DIR"
@@ -59,8 +65,12 @@ install)
     plugin_name=${line##*/}
 
     [ -L "$BUNDLE_DIR/$plugin_name" ] || {
-      [ -d "$SOURCES_DIR/$plugin_name" ] || git clone "https://github.com/$line.git" "$SOURCES_DIR/$plugin_name" >/dev/null 2>&1
-      ln -nfs "$SOURCES_DIR/$plugin_name" "$BUNDLE_DIR/$plugin_name"
+      if is_remote_repo "$line"; then
+        [ -d "$SOURCES_DIR/$plugin_name" ] || git clone "https://github.com/$line.git" "$SOURCES_DIR/$plugin_name" >/dev/null 2>&1
+        ln -nfs "$SOURCES_DIR/$plugin_name" "$BUNDLE_DIR/$plugin_name"
+      else
+        ln -nfs "$line" "$BUNDLE_DIR/$plugin_name"
+      fi
       echo "installed $plugin_name"
     }
   done < "$REPOS"
@@ -102,11 +112,11 @@ update)
   ;;
 
 clean)
-  for dir in $SOURCES_DIR/*; do
+  for dir in $BUNDLE_DIR/*; do
     plugin_name=${dir##*/}
     (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
-      rm "$BUNDLE_DIR/$plugin_name"
-      rm -rf $dir
+      rm "$dir"
+      [ -d "$SOURCES_DIR/$plugin_name" ] && rm -rf "$SOURCES_DIR/$plugin_name"
       echo "uninstalled $plugin_name"
     }
   done

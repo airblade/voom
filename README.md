@@ -23,8 +23,13 @@ You declare your plugins in `plugins`, a plain-text file you add to your dotvim 
 ```
 # Comments start with a hash character.
 # Note the plugin declarations are case-sensitive.
+
+# Declare repos on GitHub with: username/repo.
 airblade/vim-gitgutter
 tpope/vim-fugitive
+
+# Declare repos on your file system with the absolute path.
+~/code/src/vim-rooter
 ```
 
 Create a directory to hold all your plugins (default: `~/dotvim/src`) and `.gitignore` it.
@@ -37,7 +42,7 @@ Now you can install your plugins with:
 $ voom install
 ```
 
-This clones each plugin declared in `plugins` into `~/dotvim/src` and symlinks each to `~/dotvim/bundle/`.
+This clones each GitHub-hosted plugin declared in `plugins` into `~/dotvim/src` and symlinks all the sources to `~/dotvim/bundle/`.
 
 To uninstall a plugin, remove it from `plugins` and run:
 
@@ -64,17 +69,6 @@ $ voom outdated
 ```
 
 Again, you can pass a plugin name if you just want to focus on a single plugin.
-
-
-## What About Plugins You're Hacking On?
-
-If you're working on a plugin, you don't want to install it from GitHub; you want to use your local copy.  To do this, manually symlink your plugin into `bundle/`:
-
-```sh
-$ ln -nfs ~/code/src/vim-newhotness ~/dotvim/bundle/vim-newhotness
-```
-
-There's no need to add it to `plugins`.
 
 
 ## Installation
