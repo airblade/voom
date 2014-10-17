@@ -12,20 +12,15 @@
 #
 # SYNOPSIS
 #
-#   voom install|outdated|updated|clean [name]
+#   voom
+#   voom <update> [name]
 #
 #
 # OPTIONS
 #
-#   install
-#       Installs any plugins listed in `plugins` which aren't already installed.
-#
 #   update [name]
 #       Updates any plugins which aren't up to date.  If `name` is given, update
 #       only the named plugin.
-#
-#   clean
-#       Uninstall any plugins not listed in `plugins`.
 #
 
 
@@ -50,8 +45,7 @@ is_remote_repo() {
   [ "$count" -eq 1 ]
 }
 
-case $action in
-install)
+install_missing_plugins() {
   [ -d "$SOURCES_DIR" ] || mkdir "$SOURCES_DIR"
 
   while read line
@@ -70,6 +64,23 @@ install)
       echo "installed $plugin_name"
     }
   done < "$REPOS"
+}
+
+uninstall_unwanted_plugins() {
+  for dir in $BUNDLE_DIR/*; do
+    plugin_name=${dir##*/}
+    (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
+      rm "$dir"
+      [ -d "$SOURCES_DIR/$plugin_name" ] && rm -rf "$SOURCES_DIR/$plugin_name"
+      echo "uninstalled $plugin_name"
+    }
+  done
+}
+
+case $action in
+'')
+  install_missing_plugins
+  uninstall_unwanted_plugins
   ;;
 
 update)
@@ -89,19 +100,8 @@ update)
   done
   ;;
 
-clean)
-  for dir in $BUNDLE_DIR/*; do
-    plugin_name=${dir##*/}
-    (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
-      rm "$dir"
-      [ -d "$SOURCES_DIR/$plugin_name" ] && rm -rf "$SOURCES_DIR/$plugin_name"
-      echo "uninstalled $plugin_name"
-    }
-  done
-  ;;
-
 *)
-  echo >&2 "Usage: $0 <install|update|outdated|clean> [name]"
+  echo >&2 "Usage: $0 <update> [name]"
   exit 1
   ;;
 esac

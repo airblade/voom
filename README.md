@@ -16,41 +16,24 @@ Features:
 * No git submodules :)
 
 
-## How Does It Work?
+## Usage
 
-You declare your plugins in `plugins`, a plain-text file you add to your dotvim repo.  Here's an example:
+You declare your plugins in `plugins`, a plain-text manifest in your dotvim repo.  Here's an example:
 
 ```
 # Comments start with a hash character.
 # Note the plugin declarations are case-sensitive.
 
 # Declare repos on GitHub with: username/repo.
-airblade/vim-gitgutter
 tpope/vim-fugitive
 
 # Declare repos on your file system with the absolute path.
-~/code/src/vim-rooter
+/Users/andy/code/src/vim-gitgutter
 ```
 
-Create a directory to hold all your plugins (default: `~/dotvim/src`) and `.gitignore` it.
+Run `voom` without arguments to install and uninstall plugins as necessary to match the state declared in your manifest.
 
-Empty out your `bundle/` directory and `.gitignore` it.
-
-Now you can install your plugins with:
-
-```sh
-$ voom install
-```
-
-This clones each GitHub-hosted plugin declared in `plugins` into `~/dotvim/src` and symlinks all the sources to `~/dotvim/bundle/`.
-
-To uninstall a plugin, remove it from `plugins` and run:
-
-```sh
-$ voom clean
-```
-
-To update your plugins:
+To update your (GitHub-hosted) plugins:
 
 ```sh
 $ voom update
@@ -59,19 +42,29 @@ $ voom update
 If you just want to update one plugin:
 
 ```sh
-$ voom update vim-gitgutter
+$ voom update vim-fugitive
 ```
 
 
 ## Installation
 
-Put `voom` somewhere on your `PATH`.  Adjust the directory locations in the script if you need.
+- Put `voom` somewhere on your `PATH`.
+- Empty your `~/dotvim/bundle/` directory and add `bundle/` to `.gitignore`.
+- Create the `~/dotvim/src/` directory (to hold your GitHub-hosted plugins) and add it to `.gitignore`.
+- Declare your plugins in `plugins` and add the file to your repo.
 
-Empty your `~/dotvim/bundle/` directory and add `bundle/` to `.gitignore`.
 
-Create the `~/dotvim/src/` (or wherever) directory and add it to `.gitignore`.
+## How does it work?
 
-Declare your plugins in `plugins` and add the file to your repo.
+When `voom` installs a plugin:
+
+- GitHub-hosted: `voom` clones it into `~/dotvim/src/` and symlinks it into `~/dotvim/bundle/`.
+- local: `voom` symlinks it into `~/dotvim/bundle/`.
+
+When `voom` uninstalls a plugin:
+
+- GitHub-hosted: `voom` removes the symlink from `~/dotvim/bundle/` and removes the repo from `~/dotvim/src/`.
+- local: `voom` removes the symlink from `~/dotvim/bundle/`.
 
 
 ## To do (maybe)
