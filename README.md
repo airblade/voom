@@ -58,7 +58,7 @@ $ voom update vim-fugitive
 
 When `voom` installs a plugin:
 
-- GitHub-hosted: `voom` clones it into `~/dotvim/src/` and symlinks it into `~/dotvim/bundle/`.
+- GitHub-hosted: `voom` clones it (1) into `~/dotvim/src/` and symlinks it into `~/dotvim/bundle/`.
 - local: `voom` symlinks it into `~/dotvim/bundle/`.
 
 When `voom` uninstalls a plugin:
@@ -66,6 +66,7 @@ When `voom` uninstalls a plugin:
 - GitHub-hosted: `voom` removes the symlink from `~/dotvim/bundle/` and removes the repo from `~/dotvim/src/`.
 - local: `voom` removes the symlink from `~/dotvim/bundle/`.
 
+(1) `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
 
 ## To do (maybe)
 
