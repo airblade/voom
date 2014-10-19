@@ -68,11 +68,6 @@ When `voom` uninstalls a plugin:
 
 (1) `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
 
-## To do (maybe)
-
-- Instead of (1) editing `plugins` and (2) running `voom`, get `voom` to update `plugins`.
-- Support SHAs in plugin declarations in `plugins`.  E.g. `foo/bar@abc123`.
-- Speed up `voom install` by passing `--depth 1` to `git clone`.
 
   [pathogen]: https://github.com/tpope/vim-pathogen
   [vundle]: https://github.com/gmarik/vundle.vim
