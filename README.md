@@ -1,6 +1,6 @@
-# voom: a Vim plugin manager
+# voom: a simple Vim plugin manager
 
-voom is a simplest-thing-that-works way to manage your Vim plugins.
+voom is a simplest-thing-that-works tool to manage your Vim plugins.  It installs plugins, updates them, and uninstalls them.
 
 It assumes:
 
@@ -14,6 +14,15 @@ Features:
 * Fast.
 * Lightweight (<100 lines bash).
 * No git submodules :)
+
+
+## Why is voom written in bash not VimL?  
+
+Installing, updating, and uninstalling plugins simply involves making directory trees available at the appropriate locations on the file system.  It's basic command-line stuff involving things like `git`, `ln`, `rm`.  A shell script is the natural solution.
+
+All a VimL wrapper would do is call those same shell commands – but with all the problems that come with shelling out from Vim.
+
+There's no advantage to using VimL in this case, whereas there are many disadvantages.
 
 
 ## Usage
