@@ -16,7 +16,7 @@ Features:
 * No git submodules :)
 
 
-## Why is voom written in bash not VimL?  
+## Why is voom written in bash not VimL?
 
 Installing, updating, and uninstalling plugins simply involves making directory trees available at the appropriate locations on the file system.  It's basic command-line stuff involving things like `git`, `ln`, `rm`.  A shell script is the natural solution.
 
