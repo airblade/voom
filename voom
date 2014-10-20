@@ -2,25 +2,15 @@
 #
 # A Vim plugin manager designed to work with vim-pathogen.
 #
-# The workflow is:
-#
-# 1. Update `plugins` by hand.
-# 2. Run this script.
-#
-# This is one step too many: I should roll (1) into (2).
-#
-#
 # SYNOPSIS
 #
 #   voom
-#   voom <update> [name]
+#   voom [update <name>]
 #
+# USAGE
 #
-# OPTIONS
-#
-#   update [name]
-#       Updates any plugins which aren't up to date.  If `name` is given, update
-#       only the named plugin.
+#   1. Update `plugins` by hand.
+#   2. Run `voom` to install/uninstall; `voom update` to update already-installed plugins.
 #
 
 
