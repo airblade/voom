@@ -62,6 +62,17 @@ install_plugin() {
   }
 }
 
+uninstall_plugin() {
+  local dir="$1"
+  plugin_name=${dir##*/}
+  (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
+    rm "$dir"
+    [ -d "$SOURCES_DIR/$plugin_name" ] && rm -rf "$SOURCES_DIR/$plugin_name"
+    echo "uninstalled $plugin_name"
+  }
+}
+
+
 install_missing_plugins() {
   [ -d "$SOURCES_DIR" ] || mkdir "$SOURCES_DIR"
 
@@ -74,12 +85,7 @@ install_missing_plugins() {
 
 uninstall_unwanted_plugins() {
   for dir in $BUNDLE_DIR/*; do
-    plugin_name=${dir##*/}
-    (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
-      rm "$dir"
-      [ -d "$SOURCES_DIR/$plugin_name" ] && rm -rf "$SOURCES_DIR/$plugin_name"
-      echo "uninstalled $plugin_name"
-    }
+    uninstall_plugin "$dir"
   done
 }
 
