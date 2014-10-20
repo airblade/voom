@@ -54,6 +54,8 @@ If you just want to update one plugin:
 $ voom update vim-fugitive
 ```
 
+Restart Vim to pick up changes to your plugins.
+
 
 ## Installation
 
