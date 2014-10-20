@@ -68,8 +68,7 @@ update_plugin() {
     installed=$(git rev-parse master)
     [ "$upstream" == "$installed" ] || {
       git pull -q
-      echo "updated $plugin_name:"
-      git log --pretty=format:"    %h %s" $installed..$upstream
+      echo "updated $plugin_name:" && git log --pretty=format:"    %h %s" $installed..$upstream
     }
   }
 }
@@ -97,8 +96,9 @@ update)
   for dir in $BUNDLE_DIR/*; do
     plugin_name=${dir##*/}
     [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
-    update_plugin "$dir"
+    update_plugin "$dir" &
   done
+  wait
   ;;
 
 help | --help | -h)
