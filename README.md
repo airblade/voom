@@ -63,6 +63,8 @@ Restart Vim to pick up changes to your plugins.
 - Empty your `~/dotvim/bundle/` directory and add `bundle/` to `.gitignore`.
 - Declare your plugins in `plugins` and add the file to your repo.
 
+If you'd like simple vim support for your manifest (e.g. syntax highlighting, setting the `commentstring`), declare the `voom` repo in your manifest and install it as a vim plugin.
+
 
 ## How does it work?
 
