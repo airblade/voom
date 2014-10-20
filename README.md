@@ -22,7 +22,7 @@ Installing, updating, and uninstalling plugins simply involves making directory 
 
 All a VimL wrapper would do is call those same shell commands – but with all the problems that come with shelling out from Vim.
 
-There's no advantage to using VimL in this case, whereas there are many disadvantages.
+In this case the simplest thing that works is a shell script.
 
 
 ## Usage
