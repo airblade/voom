@@ -17,14 +17,14 @@
 set -e
 
 VIM_DIR=~/dotvim
-REPOS="$VIM_DIR/plugins"
+MANIFEST="$VIM_DIR/plugins"
 BUNDLE_DIR="$VIM_DIR/bundle"
 COMMENT='^#'
 action="$1"
 
 
-test -f "$REPOS" || {
-  echo >&2 "Could not locate '$REPOS'."
+test -f "$MANIFEST" || {
+  echo >&2 "Could not locate '$MANIFEST'."
   exit 1
 }
 
@@ -53,7 +53,7 @@ install_plugin() {
 uninstall_plugin() {
   local dir="$1"
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
+  (grep -v "$COMMENT" $MANIFEST | grep -q $plugin_name -) || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
@@ -76,7 +76,7 @@ update_plugin() {
 install_missing_plugins() {
   while read line; do
     install_plugin "$line" &
-  done < "$REPOS"
+  done < "$MANIFEST"
   wait
 }
 
