@@ -18,7 +18,6 @@ set -e
 
 VIM_DIR=~/dotvim
 REPOS="$VIM_DIR/plugins"
-SOURCES_DIR="$VIM_DIR/src"
 BUNDLE_DIR="$VIM_DIR/bundle"
 COMMENT='^#'
 action="$1"
@@ -41,10 +40,9 @@ install_plugin() {
 
   local plugin_name=${line##*/}
 
-  [ -L "$BUNDLE_DIR/$plugin_name" ] || {
+  [ -d "$BUNDLE_DIR/$plugin_name" ] || {
     if is_remote_repo "$line"; then
-      [ -d "$SOURCES_DIR/$plugin_name" ] || git clone --depth 1 "https://github.com/$line.git" "$SOURCES_DIR/$plugin_name" >/dev/null 2>&1
-      ln -nfs "$SOURCES_DIR/$plugin_name" "$BUNDLE_DIR/$plugin_name"
+      git clone --depth 1 "https://github.com/$line.git" "$BUNDLE_DIR/$plugin_name" >/dev/null 2>&1
     else
       ln -nfs "$line" "$BUNDLE_DIR/$plugin_name"
     fi
@@ -56,16 +54,27 @@ uninstall_plugin() {
   local dir="$1"
   plugin_name=${dir##*/}
   (grep -v "$COMMENT" $REPOS | grep -q $plugin_name -) || {
-    rm "$dir"
-    [ -d "$SOURCES_DIR/$plugin_name" ] && rm -rf "$SOURCES_DIR/$plugin_name"
+    rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
 }
 
+update_plugin() {
+  local dir="$1"
+  local plugin_name=${dir##*/}
+  [ -L "$dir" ] || {
+    cd "$dir"
+    upstream=$(git ls-remote --heads origin master | awk {'print $1'})
+    installed=$(git rev-parse master)
+    [ "$upstream" == "$installed" ] || {
+      git pull -q
+      echo "updated $plugin_name:"
+      git log --pretty=format:"    %h %s" $installed..$upstream
+    }
+  }
+}
 
 install_missing_plugins() {
-  [ -d "$SOURCES_DIR" ] || mkdir "$SOURCES_DIR"
-
   while read line; do
     install_plugin "$line" &
   done < "$REPOS"
@@ -85,19 +94,10 @@ case $action in
   ;;
 
 update)
-  for dir in $SOURCES_DIR/*; do
-    cd $dir
+  for dir in $BUNDLE_DIR/*; do
     plugin_name=${dir##*/}
-
     [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
-
-    upstream=$(git ls-remote --heads origin master | awk {'print $1'})
-    installed=$(git rev-parse master)
-    [ "$upstream" == "$installed" ] || {
-      git pull -q
-      echo "updated $plugin_name:"
-      git log --pretty=format:"    %h %s" $installed..$upstream
-    }
+    update_plugin "$dir"
   done
   ;;
 

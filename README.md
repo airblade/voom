@@ -59,7 +59,6 @@ $ voom update vim-fugitive
 
 - Put `voom` somewhere on your `PATH`.
 - Empty your `~/dotvim/bundle/` directory and add `bundle/` to `.gitignore`.
-- Create the `~/dotvim/src/` directory (to hold your GitHub-hosted plugins) and add it to `.gitignore`.
 - Declare your plugins in `plugins` and add the file to your repo.
 
 
@@ -67,12 +66,12 @@ $ voom update vim-fugitive
 
 When `voom` installs a plugin:
 
-- GitHub-hosted: `voom` clones it [1] into `~/dotvim/src/` and symlinks it into `~/dotvim/bundle/`.
+- GitHub-hosted: `voom` clones it [1] into `~/dotvim/bundle/`.
 - local: `voom` symlinks it into `~/dotvim/bundle/`.
 
 When `voom` uninstalls a plugin:
 
-- GitHub-hosted: `voom` removes the symlink from `~/dotvim/bundle/` and removes the repo from `~/dotvim/src/`.
+- GitHub-hosted: `voom` removes the directory from `~/dotvim/bundle/`.
 - local: `voom` removes the symlink from `~/dotvim/bundle/`.
 
 [1] `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
