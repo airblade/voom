@@ -96,9 +96,10 @@ update)
   for dir in $BUNDLE_DIR/*; do
     plugin_name=${dir##*/}
     [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
-    update_plugin "$dir" &
+    # Run update_plugin in the foreground because it generates multiline output
+    # and when backgrounded each iteration's output is jumbled together.
+    update_plugin "$dir"
   done
-  wait
   ;;
 
 help | --help | -h)
