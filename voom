@@ -69,7 +69,9 @@ update_plugin() {
     installed=$(git rev-parse master)
     [ "$upstream" == "$installed" ] || {
       git pull -q
-      echo "updated $plugin_name:" && git log --pretty=format:"    %h %s" $installed..$upstream
+      # Ensure the string echoed to the console in 1 line only so we can run this function
+      # in the background without worrying about interleaved output.
+      echo "updated $plugin_name: $(git log --oneline $installed..$upstream | wc -l) commit(s)"
     }
   }
 }
@@ -97,10 +99,9 @@ update)
   for dir in $BUNDLE_DIR/*; do
     plugin_name=${dir##*/}
     [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
-    # Run update_plugin in the foreground because it generates multiline output
-    # and when backgrounded each iteration's output is jumbled together.
-    update_plugin "$dir"
+    update_plugin "$dir" &
   done
+  wait
   ;;
 
 help | --help | -h)
