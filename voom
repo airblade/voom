@@ -17,6 +17,11 @@
 set -e
 
 VIM_DIR=~/dotvim
+
+test -z "$VOOM_DIR" || {
+  VIM_DIR=$VOOM_DIR
+}
+
 MANIFEST="$VIM_DIR/plugins"
 BUNDLE_DIR="$VIM_DIR/bundle"
 COMMENT='^#'
