@@ -42,7 +42,7 @@ is_remote_repo() {
 
 install_plugin() {
   local line="$1"
-  ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && continue
+  ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && return
 
   local plugin_name=${line##*/}
 
@@ -60,7 +60,7 @@ uninstall_plugin() {
   local dir="$1"
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" $MANIFEST | grep -q $plugin_name -) || {
+  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name" -) || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
@@ -77,13 +77,13 @@ update_plugin() {
       git pull -q
       # Ensure the string echoed to the console in 1 line only so we can run this function
       # in the background without worrying about interleaved output.
-      echo "updated $plugin_name: $(git log --oneline $installed..$upstream | wc -l) commit(s)"
+      echo "updated $plugin_name: $(git log --oneline "$installed".."$upstream" | wc -l) commit(s)"
     }
   }
 }
 
 install_missing_plugins() {
-  while read line; do
+  while read -r line; do
     install_plugin "$line" &
   done < "$MANIFEST"
   wait
@@ -108,18 +108,18 @@ edit)
 update)
   for dir in $BUNDLE_DIR/*; do
     plugin_name=${dir##*/}
-    [ -n "$2" ] && [ "$2" != $plugin_name ] && continue
+    [ -n "$2" ] && [ "$2" != "$plugin_name" ] && continue
     update_plugin "$dir" &
   done
   wait
   ;;
 
 help | --help | -h)
-  echo "Usage: $(basename $0) [update <name>] [edit]"
+  echo "Usage: $(basename "$0") [update <name>] [edit]"
   ;;
 
 *)
-  echo >&2 "Usage: $(basename $0) [update <name>] [edit]"
+  echo >&2 "Usage: $(basename "$0") [update <name>] [edit]"
   exit 1
   ;;
 esac
