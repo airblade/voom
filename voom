@@ -6,11 +6,13 @@
 #
 #   voom
 #   voom [update <name>]
+#   voom edit
 #
 # USAGE
 #
-#   1. Update `plugins` by hand.
-#   2. Run `voom` to install/uninstall; `voom update` to update already-installed plugins.
+#   1. Run `voom edit` to open your plugin manifest.
+#   2. Update `plugins` by hand.
+#   3. Run `voom` to install/uninstall; `voom update` to update already-installed plugins.
 #
 
 
@@ -26,6 +28,10 @@ action="$1"
 test -f "$MANIFEST" || {
   echo >&2 "Could not locate '$MANIFEST'."
   exit 1
+}
+
+edit_manifest() {
+  "${EDITOR:-vim}" "$MANIFEST"
 }
 
 is_remote_repo() {
@@ -95,6 +101,10 @@ case $action in
   uninstall_unwanted_plugins
   ;;
 
+edit)
+  edit_manifest
+  ;;
+
 update)
   for dir in $BUNDLE_DIR/*; do
     plugin_name=${dir##*/}
@@ -105,11 +115,11 @@ update)
   ;;
 
 help | --help | -h)
-  echo "Usage: $(basename $0) <update> [name]"
+  echo "Usage: $(basename $0) [update <name>] [edit]"
   ;;
 
 *)
-  echo >&2 "Usage: $(basename $0) <update> [name]"
+  echo >&2 "Usage: $(basename $0) [update <name>] [edit]"
   exit 1
   ;;
 esac
