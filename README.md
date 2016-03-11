@@ -27,7 +27,13 @@ In this case the simplest thing that works is a shell script.
 
 ## Usage
 
-You declare your plugins in `plugins`, a plain-text manifest in your dotvim repo.  Here's an example:
+You declare your plugins in `plugins`, a plain-text manifest in your dotvim repo.  Open your manifest with:
+
+```sh
+$ voom edit
+```
+
+Here's an example of a manifest:
 
 ```
 # Comments start with a hash character.
