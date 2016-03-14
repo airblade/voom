@@ -12,7 +12,7 @@ voom is an alternative to [Vundle][], [NeoBundle][], [vam][], [Vizadry][], etc.
 Features:
 
 * Fast.
-* Lightweight (<100 lines bash).
+* Lightweight (&gt;100 lines bash).
 * No git submodules :)
 
 
@@ -65,12 +65,30 @@ Restart Vim to pick up changes to your plugins.
 
 ## Installation
 
-- Put `voom` somewhere on your `PATH`.
-- Empty your `~/dotvim/bundle/` directory and add `bundle/` to `.gitignore`.
-- Declare your plugins in `plugins` and add the file to your repo.
+Here is a quick summary of steps:
+
+- Create a folder where you'd like to store your Vim plugins
+- Create a `plugins` manifest file to declare your plugins
+- Create a symlink to that folder
+- Download the Pathogen dependency
+- Download this Voom repo
+- Make sure your system can locate the `voom` script
+
+So let's put this into practice now.  
+You should notice the following commands map exactly to the above steps.
+
+> Note: I've used the name `dotvim`, but feel free to rename it
+
+- `mkdir -p ~/dotvim/{autoload,bundle}`
+- `touch dotvim/plugins`
+- `ln -nfs ~/dotvim ~/.vim`
+- `curl -LSso ~/dotvim/autoload/pathogen.vim https://raw.github.com/tpope/vim-pathogen/master/autoload/pathogen.vim`
+- `git clone git@github.com:airblade/voom.git ~/dotvim/voom`
+- `export PATH=$HOME/dotvim/voom:$PATH`
 
 If you'd like simple vim support for your manifest (e.g. syntax highlighting, setting the `commentstring`), declare the `voom` repo in your manifest and install it as a vim plugin.
 
+> Note: if you require NeoVim support then symlink to `~/.nvim` instead of `~/.vim`
 
 ## How does it work?
 
@@ -86,15 +104,12 @@ When `voom` uninstalls a plugin:
 
 [1] `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
 
-
   [pathogen]: https://github.com/tpope/vim-pathogen
   [vundle]: https://github.com/gmarik/vundle.vim
   [NeoBundle]: https://github.com/Shougo/neobundle.vim
   [vam]: https://github.com/MarcWeber/vim-addon-manager
   [vizadry]: https://github.com/ardagnir/vizardry
 
-
 ## Intellectual Property
 
 Copyright Andrew Stewart.  Released under the MIT licence.
-
