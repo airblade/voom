@@ -28,7 +28,7 @@ NeoVim users: follow the instructions below but:
 - replace `~/.vimrc` with `~/.config/nvim/init.vim`
 
 
-### If you already have a `~/.vim` directory
+#### If you already have a `~/.vim` directory
 
 Empty your `~/.vim/bundle/` directory and git-ignore everything in `bundle/`.
 
@@ -38,19 +38,19 @@ $ cd ~/.vim && echo 'bundle/' >> .gitignore
 ```
 
 
-### If you don't yet have a `~/.vim` directory
+#### If you don't yet have a `~/.vim` directory
 
 Create it together with the `autoload` and `bundle` subdirectories:
 
 ```sh
-mkdir -p ~/.vim/{autoload,bundle}
+$ mkdir -p ~/.vim/{autoload,bundle}
 ```
 
 
-### Install Pathogen
+#### Install Pathogen
 
 ```sh
-curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+$ curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 ```
 
 Add this to the top of your `~/.vimrc`:
@@ -60,7 +60,7 @@ execute pathogen#infect()
 ```
 
 
-### Install the `voom` script somewhere on your PATH
+#### Install the `voom` script somewhere on your PATH
 
 For example, if `~/bin` is on your path:
 
@@ -75,7 +75,7 @@ $ alias voom='VIM_DIR=~/.config/nvim voom'
 ```
 
 
-### Declare your plugins in `plugins` and add the file to your repo
+#### Declare your plugins in `plugins` and add the file to your repo
 
 ```sh
 $ echo 'airblade/voom' > ~/.vim/plugins
