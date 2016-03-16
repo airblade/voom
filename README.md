@@ -7,7 +7,7 @@ It assumes:
 - The plugins you use are on GitHub (or in-progress on disk).
 - You use [Pathogen][] to manage Vim's runtime path.
 
-voom is an alternative to [Vundle][], [NeoBundle][], [vam][], [Vizadry][], etc.
+voom is an alternative to [vim-plug][], [Vundle][], [NeoBundle][], [vam][], [Vizadry][], etc.
 
 Features:
 
@@ -88,6 +88,7 @@ When `voom` uninstalls a plugin:
 
 
   [pathogen]: https://github.com/tpope/vim-pathogen
+  [vim-plug]:https://github.com/junegunn/vim-plug
   [vundle]: https://github.com/gmarik/vundle.vim
   [NeoBundle]: https://github.com/Shougo/neobundle.vim
   [vam]: https://github.com/MarcWeber/vim-addon-manager
