@@ -11,23 +11,84 @@ voom is an alternative to [vim-plug][], [Vundle][], [NeoBundle][], [vam][], [Viz
 
 Features:
 
-* Fast.
-* Lightweight (<100 lines bash).
+* Fast: plugins are installed in parallel.
+* Lightweight (100 lines of bash).
 * No git submodules :)
 
 
-## Why is voom written in bash not VimL?
+## Installation
 
-Installing, updating, and uninstalling plugins simply involves making directory trees available at the appropriate locations on the file system.  It's basic command-line stuff involving things like `git`, `ln`, `rm`.  A shell script is the natural solution.
+Voom works with both Vim and NeoVim.
 
-All a VimL wrapper would do is call those same shell commands – but with all the problems that come with shelling out from Vim.
+Vim users: just follow the instructions below.
 
-In this case the simplest thing that works is a shell script.
+NeoVim users: follow the instructions below but:
+
+- replace `~/.vim` with `~/.config/nvim`
+- replace `~/.vimrc` with `~/.config/nvim/init.vim`
+
+
+### If you already have a `~/.vim` directory
+
+Empty your `~/.vim/bundle/` directory and git-ignore everything in `bundle/`.
+
+```sh
+$ rm -rf ~/.vim/bundle/*
+$ cd ~/.vim && echo 'bundle/' >> .gitignore
+```
+
+
+### If you don't yet have a `~/.vim` directory
+
+Create it together with the `autoload` and `bundle` subdirectories:
+
+```sh
+mkdir -p ~/.vim/{autoload,bundle}
+```
+
+
+### Install Pathogen
+
+```sh
+curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+```
+
+Add this to the top of your `~/.vimrc`:
+
+```viml
+execute pathogen#infect()
+```
+
+
+### Install the `voom` script somewhere on your PATH
+
+For example, if `~/bin` is on your path:
+
+```sh
+$ curl -LSso ~/bin/voom https://raw.githubusercontent.com/airblade/voom/master/voom
+```
+
+NeoVim users: tell voom where your configuration is:
+
+```sh
+$ alias voom='VIM_DIR=~/.config/nvim voom'
+```
+
+
+### Declare your plugins in `plugins` and add the file to your repo
+
+```sh
+$ echo 'airblade/voom' > ~/.vim/plugins
+$ voom edit
+$ git add ~/.vim/plugins
+```
+
+You don't need `airblade/voom` in your manifest – the `voom` script does all the work – but it makes editing the manifest a little nicer.
 
 
 ## Usage
 
-You declare your plugins in `plugins`, a plain-text manifest in your dotvim repo.  Open your manifest with:
+You declare your plugins in `plugins`, a plain-text manifest in your vim repo.  Open your manifest with:
 
 ```sh
 $ voom edit
@@ -46,7 +107,7 @@ tpope/vim-fugitive
 /Users/andy/code/src/vim-gitgutter
 ```
 
-Run `voom` without arguments to install and uninstall plugins as necessary to match the state declared in your manifest.
+Run `voom` without arguments to install and uninstall plugins as necessary to match your manifest.
 
 To update your (GitHub-hosted) plugins:
 
@@ -63,28 +124,29 @@ $ voom update vim-fugitive
 Restart Vim to pick up changes to your plugins.
 
 
-## Installation
-
-- Put `voom` somewhere on your `PATH`.
-- Empty your `~/dotvim/bundle/` directory and add `bundle/` to `.gitignore`.
-- Declare your plugins in `plugins` and add the file to your repo.
-
-If you'd like simple vim support for your manifest (e.g. syntax highlighting, setting the `commentstring`), declare the `voom` repo in your manifest and install it as a vim plugin.
-
 
 ## How does it work?
 
 When `voom` installs a plugin:
 
-- GitHub-hosted: `voom` clones it [1] into `~/dotvim/bundle/`.
-- local: `voom` symlinks it into `~/dotvim/bundle/`.
+- GitHub-hosted: `voom` clones it [1] into `~/.vim/bundle/`.
+- local: `voom` symlinks it into `~/.vim/bundle/`.
 
 When `voom` uninstalls a plugin:
 
-- GitHub-hosted: `voom` removes the directory from `~/dotvim/bundle/`.
-- local: `voom` removes the symlink from `~/dotvim/bundle/`.
+- GitHub-hosted: `voom` removes the directory from `~/.vim/bundle/`.
+- local: `voom` removes the symlink from `~/.vim/bundle/`.
 
 [1] `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
+
+
+## Why is voom written in bash not VimL?
+
+Installing, updating, and uninstalling plugins simply involves making directory trees available at the appropriate locations on the file system.  It's basic command-line stuff involving things like `git`, `ln`, `rm`.  A shell script is the natural solution.
+
+All a VimL wrapper would do is call those same shell commands – but with all the problems that come with shelling out from Vim.
+
+In this case the simplest thing that works is a shell script.
 
 
   [pathogen]: https://github.com/tpope/vim-pathogen
@@ -93,6 +155,7 @@ When `voom` uninstalls a plugin:
   [NeoBundle]: https://github.com/Shougo/neobundle.vim
   [vam]: https://github.com/MarcWeber/vim-addon-manager
   [vizadry]: https://github.com/ardagnir/vizardry
+  [neovim]: https://neovim.io/doc/user/nvim_from_vim.html
 
 
 ## Intellectual Property
