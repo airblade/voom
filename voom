@@ -10,15 +10,14 @@
 #
 # USAGE
 #
-#   1. Run `voom edit` to open your plugin manifest.
-#   2. Update `plugins` by hand.
-#   3. Run `voom` to install/uninstall; `voom update` to update already-installed plugins.
+#   1. Run `voom edit` to edit your plugin manifest.
+#   2. Run `voom` to install/uninstall; `voom update` to update already-installed plugins.
 #
 
 
 set -e
 
-VIM_DIR=~/dotvim
+VIM_DIR="${VIM_DIR:-$HOME/.vim}"
 MANIFEST="$VIM_DIR/plugins"
 BUNDLE_DIR="$VIM_DIR/bundle"
 COMMENT='^#'
