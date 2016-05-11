@@ -102,6 +102,8 @@ case $action in
 
 edit)
   edit_manifest
+  install_missing_plugins
+  uninstall_unwanted_plugins
   ;;
 
 update)
