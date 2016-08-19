@@ -95,7 +95,7 @@ uninstall_plugin() {
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
   (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name" &&
-   [[ ! "$plugin_name" =~ .*git.* ]]) || {
+   ([ "$git" == "true" ] || [[ ! "$plugin_name" =~ .*git.* ]])) || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
