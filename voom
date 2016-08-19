@@ -30,6 +30,7 @@ test -f "$MANIFEST" || {
 }
 
 if hash git 2>/dev/null; then
+  git="true"
   install() {
     git clone --depth 1 "$1" "$2" >/dev/null 2>&1
   }
@@ -77,6 +78,7 @@ install_plugin() {
   ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && return
 
   local plugin_name=${line##*/}
+  ([ "$git" != "true" ] && [[ "$plugin_name" =~ .*git.* ]]) && return
 
   [ -d "$BUNDLE_DIR/$plugin_name" ] || {
     if is_remote_repo "$line"; then
@@ -92,7 +94,8 @@ uninstall_plugin() {
   local dir="$1"
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name") || {
+  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name" &&
+   [[ ! "$plugin_name" =~ .*git.* ]]) || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
