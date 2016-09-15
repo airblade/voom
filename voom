@@ -29,6 +29,40 @@ test -f "$MANIFEST" || {
   exit 1
 }
 
+if hash git 2>/dev/null; then
+  git="true"
+  install() {
+    git clone --depth 1 "$1" "$2" >/dev/null 2>&1
+  }
+
+  check_update() {
+    commits=$(git rev-list --left-only --count origin/master...master)
+    return $commits
+  }
+
+  update() {
+    git pull -q
+  }
+elif hash svn 2>/dev/null; then
+  install() {
+    svn checkout "$1/trunk" "$2" >/dev/null 2>&1
+  }
+
+  check_update() {
+    local remote_version=$(svn info $(svn info | awk '/URL:/ { print $2 }') | awk '/Revision:/ { print $2 }')
+    local local_version=$(svnversion)
+    commits=$((remote_version - local_version))
+    return $commits
+  }
+
+  update() {
+    svn update >/dev/null 2>&1
+  }
+else
+  echo >&2 "No VCS found to install with"
+  exit 1
+fi
+
 edit_manifest() {
   "${EDITOR:-vim}" "$MANIFEST"
 }
@@ -44,10 +78,11 @@ install_plugin() {
   ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && return
 
   local plugin_name=${line##*/}
+  ([ "$git" != "true" ] && [[ "$plugin_name" != *"git"* ]]) && return
 
   [ -d "$BUNDLE_DIR/$plugin_name" ] || {
     if is_remote_repo "$line"; then
-      git clone --depth 1 "https://github.com/$line.git" "$BUNDLE_DIR/$plugin_name" >/dev/null 2>&1
+      install "https://github.com/$line.git" "$BUNDLE_DIR/$plugin_name"
     else
       ln -nfs "$line" "$BUNDLE_DIR/$plugin_name"
     fi
@@ -59,7 +94,8 @@ uninstall_plugin() {
   local dir="$1"
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name" -) || {
+  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name" &&
+   ([ "$git" == "true" ] || [[ "$plugin_name" != *"git"* ]])) || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
@@ -70,13 +106,9 @@ update_plugin() {
   local plugin_name=${dir##*/}
   [ -L "$dir" ] || {
     cd "$dir"
-    upstream=$(git ls-remote --heads origin master | awk {'print $1'})
-    installed=$(git rev-parse master)
-    [ "$upstream" == "$installed" ] || {
-      git pull -q
-      # Ensure the string echoed to the console in 1 line only so we can run this function
-      # in the background without worrying about interleaved output.
-      echo "updated $plugin_name: $(git log --oneline "$installed".."$upstream" | wc -l) commit(s)"
+    check_update || {
+      update
+      echo "updated $plugin_name: $commits commit(s)"
     }
   }
 }
