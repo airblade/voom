@@ -78,7 +78,7 @@ install_plugin() {
   ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && return
 
   local plugin_name=${line##*/}
-  ([ "$git" != "true" ] && [[ "$plugin_name" != *"git"* ]]) && return
+  ([ "$git" != "true" ] && [[ "$plugin_name" == *"git"* ]]) && return
 
   [ -d "$BUNDLE_DIR/$plugin_name" ] || {
     if is_remote_repo "$line"; then
