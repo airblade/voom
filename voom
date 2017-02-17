@@ -59,7 +59,7 @@ uninstall_plugin() {
   local dir="$1"
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name" -) || {
+  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name") || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
@@ -74,9 +74,11 @@ update_plugin() {
     installed=$(git rev-parse master)
     [ "$upstream" == "$installed" ] || {
       git pull -q
+      log="$(git log --oneline "$installed".."$upstream")"
+      commits=$(git rev-list --left-only --count "$upstream"..."$installed")
       # Ensure the string echoed to the console in 1 line only so we can run this function
       # in the background without worrying about interleaved output.
-      echo "updated $plugin_name: $(git log --oneline "$installed".."$upstream" | wc -l) commit(s)"
+      printf "updated %s: %i commit(s)\n%s\n\n" "$plugin_name" "$commits" "$log"
     }
   }
 }
