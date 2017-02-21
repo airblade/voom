@@ -76,8 +76,6 @@ update_plugin() {
       git pull -q
       log="$(git log --oneline "$installed".."$upstream")"
       commits=$(git rev-list --left-only --count "$upstream"..."$installed")
-      # Ensure the string echoed to the console in 1 line only so we can run this function
-      # in the background without worrying about interleaved output.
       printf "updated %s: %i commit(s)\n%s\n\n" "$plugin_name" "$commits" "$log"
     }
   }
