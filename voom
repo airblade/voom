@@ -19,7 +19,7 @@ set -e
 
 VIM_DIR="${VIM_DIR:-$HOME/.vim}"
 MANIFEST="$VIM_DIR/plugins"
-BUNDLE_DIR="$VIM_DIR/bundle"
+BUNDLE_DIR="${VIM_BUNDLE_DIR:-$VIM_DIR/bundle}"
 COMMENT='^#'
 action="$1"
 
