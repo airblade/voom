@@ -5,7 +5,7 @@ voom is a simplest-thing-that-works tool to manage your Vim plugins.  It install
 It assumes:
 
 - The plugins you use are on GitHub (or in-progress on disk).
-- You use [Pathogen][] to manage Vim's runtime path.
+- You use [Pathogen][] or Vim packages to manage Vim's runtime path.
 
 voom is an alternative to [vim-plug][], [Vundle][], [NeoBundle][], [vam][], [Vizadry][], etc.
 
@@ -26,6 +26,10 @@ NeoVim users: follow the instructions below but:
 
 - replace `~/.vim` with `~/.config/nvim`
 - replace `~/.vimrc` with `~/.config/nvim/init.vim`
+
+If you’re using Vim packages: follow the instructions below but:
+
+- replace `~/.vim/bundle` with `~/.vim/pack/bundle/start` (or any other package name instead of `bundle`)
 
 
 #### If you already have a `~/.vim` directory
@@ -48,6 +52,8 @@ $ mkdir -p ~/.vim/{autoload,bundle}
 
 
 #### Install Pathogen
+
+You can skip this step if you want to use Vim 8 packages.
 
 ```sh
 $ curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
@@ -72,6 +78,12 @@ NeoVim users: tell voom where your configuration is:
 
 ```sh
 $ alias voom='VIM_DIR=~/.config/nvim voom'
+```
+
+If you’re using Vim 8 packages: tell voom where to save your plugins configuration:
+
+```sh
+$ alias voom='VIM_BUNDLE_DIR=~/.vim/pack/bundle/start voom'
 ```
 
 
