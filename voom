@@ -34,6 +34,14 @@ test -f "$MANIFEST" || {
   exit 1
 }
 
+is_nvim() {
+  if [[ $VIM_DIR =~ nvim ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 edit_manifest() {
   "${EDITOR:-vim}" "$MANIFEST"
 }
@@ -99,16 +107,28 @@ uninstall_unwanted_plugins() {
   done
 }
 
+update_help_tags() {
+  if is_nvim; then
+    local cmd=nvim
+  else
+    local cmd=vim
+  fi
+
+  $cmd -c ':helptags ALL' -c ':quit'
+}
+
 case $action in
 '')
   install_missing_plugins
   uninstall_unwanted_plugins
+  update_help_tags
   ;;
 
 edit)
   edit_manifest
   install_missing_plugins
   uninstall_unwanted_plugins
+  update_help_tags
   ;;
 
 update)
@@ -118,6 +138,7 @@ update)
     update_plugin "$dir" &
   done
   wait
+  update_help_tags
   ;;
 
 help | --help | -h)
