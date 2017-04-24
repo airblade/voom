@@ -64,7 +64,7 @@ uninstall_plugin() {
   local dir="$1"
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" $MANIFEST | grep -q "$plugin_name") || {
+  (grep -v "$COMMENT" "$MANIFEST" | grep -q "$plugin_name") || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
@@ -75,7 +75,7 @@ update_plugin() {
   local plugin_name=${dir##*/}
   [ -L "$dir" ] || {
     cd "$dir"
-    upstream=$(git ls-remote --heads origin master | awk {'print $1'})
+    upstream=$(git ls-remote --heads origin master | awk '{print $1}')
     installed=$(git rev-parse master)
     [ "$upstream" == "$installed" ] || {
       git pull -q
