@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# A Vim plugin manager designed to work with vim-pathogen.
+# A Vim plugin manager designed to work with Vim 8 packages or vim-pathogen.
 #
 # SYNOPSIS
 #
@@ -19,7 +19,7 @@ set -e
 
 VIM_DIR="${VIM_DIR:-$HOME/.vim}"
 MANIFEST="$VIM_DIR/plugins"
-BUNDLE_DIR="${VIM_BUNDLE_DIR:-$VIM_DIR/bundle}"
+BUNDLE_DIR="${VIM_BUNDLE_DIR:-$VIM_DIR/pack/voom/start}"
 COMMENT='^#'
 action="$1"
 

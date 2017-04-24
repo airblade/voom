@@ -5,7 +5,7 @@ voom is a simplest-thing-that-works tool to manage your Vim plugins.  It install
 It assumes:
 
 - The plugins you use are on GitHub (or in-progress on disk).
-- You use [Pathogen][] or Vim packages to manage Vim's runtime path.
+- You use Vim 8 packages (or [Pathogen][] to manage Vim's runtime path).
 
 voom is an alternative to [vim-plug][], [Vundle][], [NeoBundle][], [vam][], [Vizadry][], etc.
 
@@ -27,42 +27,17 @@ NeoVim users: follow the instructions below but:
 - replace `~/.vim` with `~/.config/nvim`
 - replace `~/.vimrc` with `~/.config/nvim/init.vim`
 
-If you’re using Vim packages: follow the instructions below but:
+If you use Pathogen instead of Vim packages, follow the instructions below but:
 
-- replace `~/.vim/bundle` with `~/.vim/pack/bundle/start` (or any other package name instead of `bundle`)
-
-
-#### If you already have a `~/.vim` directory
-
-Empty your `~/.vim/bundle/` directory and git-ignore everything in `bundle/`.
-
-```sh
-$ rm -rf ~/.vim/bundle/*
-$ cd ~/.vim && echo 'bundle/' >> .gitignore
-```
+- replace `pack/voom/start/` with `bundle/`
 
 
-#### If you don't yet have a `~/.vim` directory
+#### Create the installation directory
 
-Create it together with the `autoload` and `bundle` subdirectories:
+Create a `~/.vim/pack/voom/start` directory and git-ignore everything in `pack/voom/`.
 
 ```sh
-$ mkdir -p ~/.vim/{autoload,bundle}
-```
-
-
-#### Install Pathogen
-
-You can skip this step if you want to use Vim 8 packages.
-
-```sh
-$ curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
-```
-
-Add this to the top of your `~/.vimrc`:
-
-```viml
-execute pathogen#infect()
+$ cd ~/.vim && mkdir -p pack/voom/start && echo 'pack/voom/' >> .gitignore
 ```
 
 
@@ -80,10 +55,10 @@ NeoVim users: tell voom where your configuration is:
 $ alias voom='VIM_DIR=~/.config/nvim voom'
 ```
 
-If you’re using Vim 8 packages: tell voom where to save your plugins configuration:
+If you use Pathogen: tell voom where to save your plugins:
 
 ```sh
-$ alias voom='VIM_BUNDLE_DIR=~/.vim/pack/bundle/start voom'
+$ alias voom='VIM_BUNDLE_DIR=~/.vim/bundle voom'
 ```
 
 
@@ -141,13 +116,13 @@ Restart Vim to pick up changes to your plugins.
 
 When `voom` installs a plugin:
 
-- GitHub-hosted: `voom` clones it [1] into `~/.vim/bundle/`.
-- local: `voom` symlinks it into `~/.vim/bundle/`.
+- GitHub-hosted: `voom` clones it [1] into `~/.vim/pack/voom/start/`.
+- local: `voom` symlinks it into `~/.vim/pack/voom/start/`.
 
 When `voom` uninstalls a plugin:
 
-- GitHub-hosted: `voom` removes the directory from `~/.vim/bundle/`.
-- local: `voom` removes the symlink from `~/.vim/bundle/`.
+- GitHub-hosted: `voom` removes the directory from `~/.vim/pack/voom/start/`.
+- local: `voom` removes the symlink from `~/.vim/pack/voom/start/`.
 
 [1] `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
 
