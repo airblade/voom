@@ -55,10 +55,10 @@ NeoVim users: tell voom where your configuration is:
 $ alias voom='VIM_DIR=~/.config/nvim voom'
 ```
 
-If you use Pathogen: tell voom where to save your plugins:
+Pathogen users: tell voom where to save your plugins:
 
 ```sh
-$ alias voom='VIM_BUNDLE_DIR=~/.vim/bundle voom'
+$ alias voom='VIM_PLUGINS_DIR=~/.vim/bundle voom'
 ```
 
 

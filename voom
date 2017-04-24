@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# A Vim plugin manager designed to work with Vim 8 packages or vim-pathogen.
+# A Vim plugin manager designed to work with Vim 8 packages (or vim-pathogen).
 #
 # SYNOPSIS
 #
@@ -17,9 +17,14 @@
 
 set -e
 
+if [ -n "$VIM_BUNDLE_DIR" ]; then
+  echo VIM_BUNDLE_DIR is deprecated. Please use VIM_PLUGINS_DIR instead.
+  PLUGINS_DIR="$VIM_BUNDLE_DIR"
+fi
+
 VIM_DIR="${VIM_DIR:-$HOME/.vim}"
 MANIFEST="$VIM_DIR/plugins"
-BUNDLE_DIR="${VIM_BUNDLE_DIR:-$VIM_DIR/pack/voom/start}"
+PLUGINS_DIR="${VIM_PLUGINS_DIR:-$VIM_DIR/pack/voom/start}"
 COMMENT='^#'
 action="$1"
 
@@ -45,11 +50,11 @@ install_plugin() {
 
   local plugin_name=${line##*/}
 
-  [ -d "$BUNDLE_DIR/$plugin_name" ] || {
+  [ -d "$PLUGINS_DIR/$plugin_name" ] || {
     if is_remote_repo "$line"; then
-      git clone --depth 1 "https://github.com/$line.git" "$BUNDLE_DIR/$plugin_name" >/dev/null 2>&1
+      git clone --depth 1 "https://github.com/$line.git" "$PLUGINS_DIR/$plugin_name" >/dev/null 2>&1
     else
-      ln -nfs "$line" "$BUNDLE_DIR/$plugin_name"
+      ln -nfs "$line" "$PLUGINS_DIR/$plugin_name"
     fi
     echo "installed $plugin_name"
   }
@@ -89,7 +94,7 @@ install_missing_plugins() {
 }
 
 uninstall_unwanted_plugins() {
-  for dir in $BUNDLE_DIR/*; do
+  for dir in $PLUGINS_DIR/*; do
     uninstall_plugin "$dir"
   done
 }
@@ -107,7 +112,7 @@ edit)
   ;;
 
 update)
-  for dir in $BUNDLE_DIR/*; do
+  for dir in $PLUGINS_DIR/*; do
     plugin_name=${dir##*/}
     [ -n "$2" ] && [ "$2" != "$plugin_name" ] && continue
     update_plugin "$dir" &
