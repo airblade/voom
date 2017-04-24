@@ -75,7 +75,7 @@ You don't need `airblade/voom` in your manifest – the `voom` script does all t
 
 ## Usage
 
-You declare your plugins in `plugins`, a plain-text manifest in your vim repo.  Open your manifest with:
+Declare your plugins in `plugins`, a plain-text manifest in your vim repo.  Open your manifest with:
 
 ```sh
 $ voom edit
@@ -127,11 +127,11 @@ When `voom` uninstalls a plugin:
 [1] `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
 
 
-## Why is voom written in bash not VimL?
+## Why is voom written in bash not Vim script?
 
 Installing, updating, and uninstalling plugins simply involves making directory trees available at the appropriate locations on the file system.  It's basic command-line stuff involving things like `git`, `ln`, `rm`.  A shell script is the natural solution.
 
-All a VimL wrapper would do is call those same shell commands – but with all the problems that come with shelling out from Vim.
+All a Vim script wrapper would do is call those same shell commands – but with all the problems that come with shelling out from Vim.
 
 In this case the simplest thing that works is a shell script.
 
