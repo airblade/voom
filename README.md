@@ -34,25 +34,21 @@ If you use Pathogen instead of Vim packages, follow the instructions below but:
 
 #### Create the installation directory
 
-Create a `~/.vim/pack/voom/start` directory and git-ignore everything in `pack/voom/`.
+Create a `~/.vim/pack/voom/start` (Vim) or `~/.config/nvim/pack/voom/start` (NeoVim) directory and git-ignore everything in `pack/voom/`.
 
 ```sh
 $ cd ~/.vim && mkdir -p pack/voom/start && echo 'pack/voom/' >> .gitignore
+$ cd ~/.config/nvim && mkdir -p pack/voom/start && echo 'pack/voom/' >> .gitignore
 ```
 
 
-#### Install the `voom` script somewhere on your PATH
+#### Install the `(n)voom` scripts somewhere on your PATH
 
 For example, if `~/bin` is on your path:
 
 ```sh
 $ curl -LSso ~/bin/voom https://raw.githubusercontent.com/airblade/voom/master/voom
-```
-
-NeoVim users: tell voom where your configuration is:
-
-```sh
-$ alias voom='VIM_DIR=~/.config/nvim voom'
+$ curl -LSso ~/bin/nvoom https://raw.githubusercontent.com/airblade/voom/master/nvoom
 ```
 
 Pathogen users: tell voom where to save your plugins:
@@ -65,8 +61,8 @@ $ alias voom='VIM_PLUGINS_DIR=~/.vim/bundle voom'
 #### Declare your plugins in `plugins` and add the file to your repo
 
 ```sh
-$ echo 'airblade/voom' > ~/.vim/plugins
-$ voom edit
+$ echo 'airblade/voom' > ~/.vim/plugins    # optional
+$ voom edit                                # opens your editor so you can declare your plugins
 $ git add ~/.vim/plugins
 ```
 

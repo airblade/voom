@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+VIM_DIR=~/.config/nvim voom "$@"
