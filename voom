@@ -83,8 +83,9 @@ update_plugin() {
   local plugin_name=${dir##*/}
   [ -L "$dir" ] || {
     cd "$dir"
-    upstream=$(git ls-remote --heads origin master | awk '{print $1}')
-    installed=$(git rev-parse master)
+    local branch=$(git symbolic-ref --short HEAD)
+    upstream=$(git ls-remote --heads origin $branch | awk '{print $1}')
+    installed=$(git rev-parse $branch)
     [ "$upstream" == "$installed" ] || {
       git pull -q
       log="$(git log --oneline "$installed".."$upstream")"
