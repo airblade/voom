@@ -90,11 +90,9 @@ update_plugin() {
     [ "$upstream" == "$installed" ] || {
       git pull -q
       local commits=$(git rev-list --left-only --count "$upstream"..."$installed")
-      printf "updated %s: %i commit(s)\n" "$plugin_name" "$commits"
-      [ "$quiet" != 1 ] && {
-        local log="$(git log --oneline "$installed".."$upstream")"
-        printf "%s\n\n" "$log"
-      }
+      local log
+      [ "$quiet" != 1 ] && log="$(git log --oneline "$installed".."$upstream")\n\n"
+      printf "updated %s: %i commit(s)\n%s" "$plugin_name" "$commits" "$log"
     }
   }
 }
