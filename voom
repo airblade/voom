@@ -5,7 +5,7 @@
 # SYNOPSIS
 #
 #   voom
-#   voom [update <name>]
+#   voom [update [-q] <name>]
 #   voom edit
 #
 # USAGE
@@ -80,17 +80,21 @@ uninstall_plugin() {
 
 update_plugin() {
   local dir="$1"
+  local quiet="$2"
   local plugin_name=${dir##*/}
   [ -L "$dir" ] || {
     cd "$dir"
     local branch=$(git symbolic-ref --short HEAD)
-    upstream=$(git ls-remote --heads origin $branch | awk '{print $1}')
-    installed=$(git rev-parse $branch)
+    local upstream=$(git ls-remote --heads origin $branch | awk '{print $1}')
+    local installed=$(git rev-parse $branch)
     [ "$upstream" == "$installed" ] || {
       git pull -q
-      log="$(git log --oneline "$installed".."$upstream")"
-      commits=$(git rev-list --left-only --count "$upstream"..."$installed")
-      printf "updated %s: %i commit(s)\n%s\n\n" "$plugin_name" "$commits" "$log"
+      local commits=$(git rev-list --left-only --count "$upstream"..."$installed")
+      printf "updated %s: %i commit(s)\n" "$plugin_name" "$commits"
+      [ "$quiet" != 1 ] && {
+        local log="$(git log --oneline "$installed".."$upstream")"
+        printf "%s\n\n" "$log"
+      }
     }
   }
 }
@@ -133,21 +137,28 @@ edit)
   ;;
 
 update)
+  shift
+  if [[ "$1" = "-q" ]]; then
+    quiet=1
+    shift
+  else
+    quiet=0
+  fi
   for dir in $PLUGINS_DIR/*; do
     plugin_name=${dir##*/}
-    [ -n "$2" ] && [ "$2" != "$plugin_name" ] && continue
-    update_plugin "$dir" &
+    [ -n "$1" ] && [ "$1" != "$plugin_name" ] && continue
+    update_plugin "$dir" $quiet &
   done
   wait
   update_help_tags
   ;;
 
 help | --help | -h)
-  echo "Usage: $(basename "$0") [update <name>] [edit]"
+  echo "Usage: $(basename "$0") [update [-q] <name>] [edit]"
   ;;
 
 *)
-  echo >&2 "Usage: $(basename "$0") [update <name>] [edit]"
+  echo >&2 "Usage: $(basename "$0") [update [-q] <name>] [edit]"
   exit 1
   ;;
 esac

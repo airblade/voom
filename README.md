@@ -104,6 +104,12 @@ If you just want to update one plugin:
 $ voom update vim-fugitive
 ```
 
+If you want to update plugins with minimal output:
+
+```sh
+$ voom update -q
+```
+
 Restart Vim to pick up changes to your plugins.
 
 
