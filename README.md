@@ -86,6 +86,10 @@ Here's an example of a manifest:
 # Declare repos on GitHub with: username/repo.
 tpope/vim-fugitive
 
+# Declare repos on Gitlab or others with full URL:
+https://github.com/tpope/vim-obsession
+https://gitlab.com/hugoh/vim-auto-obsession
+
 # Declare repos on your file system with the absolute path.
 /Users/andy/code/src/vim-gitgutter
 ```

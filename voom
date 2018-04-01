@@ -46,10 +46,13 @@ edit_manifest() {
   "${EDITOR:-vim}" "$MANIFEST"
 }
 
-is_remote_repo() {
-  local slashes="${1//[^\/]}"
+remote_repo() {
+  local repo=$1
+  [[ $repo = http://* || $repo = https://* ]] && printf "%s.git" "$repo" && return
+  local slashes="${repo//[^\/]}"
   local count="${#slashes}"
-  [ "$count" -eq 1 ]
+  [ "$count" -eq 1 ] && printf "https://github.com/%s.git" "$repo" && return
+  # Otherwise, it's a local repo
 }
 
 install_plugin() {
@@ -59,8 +62,9 @@ install_plugin() {
   local plugin_name=${line##*/}
 
   [ -d "$PLUGINS_DIR/$plugin_name" ] || {
-    if is_remote_repo "$line"; then
-      git clone --depth 1 "https://github.com/$line.git" "$PLUGINS_DIR/$plugin_name" >/dev/null 2>&1
+    local repo=$(remote_repo "$line")
+    if [[ -n "$repo" ]]; then
+      git clone --depth 1 "$repo" "$PLUGINS_DIR/$plugin_name" >/dev/null 2>&1
     else
       ln -nfs "$line" "$PLUGINS_DIR/$plugin_name"
     fi
