@@ -4,7 +4,7 @@ voom is a simplest-thing-that-works tool to manage your Vim plugins.  It install
 
 It assumes:
 
-- The plugins you use are on GitHub (or in-progress on disk).
+- The plugins you use are on GitHub, cloneable with an http/https URL, or in-progress on disk.
 - You use Vim 8 packages (or [Pathogen][] to manage Vim's runtime path).
 
 voom is an alternative to [vim-plug][], [Vundle][], [NeoBundle][], [vam][], [Vizadry][], etc.
