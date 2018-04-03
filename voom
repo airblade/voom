@@ -96,7 +96,7 @@ update_plugin() {
       local commits=$(git rev-list --left-only --count "$upstream"..."$installed")
       local log
       [ "$quiet" != 1 ] && log="$(git log --oneline "$installed".."$upstream")\n\n"
-      printf "updated %s: %i commit(s)\n%s" "$plugin_name" "$commits" "$log"
+      printf "updated %s: %i commit(s)\n%b" "$plugin_name" "$commits" "$log"
     }
   }
 }
