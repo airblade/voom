@@ -89,8 +89,8 @@ update_plugin() {
   [ -L "$dir" ] || {
     cd "$dir"
     local branch=$(git symbolic-ref --short HEAD)
-    local upstream=$(git ls-remote --heads origin $branch | awk '{print $1}')
-    local installed=$(git rev-parse $branch)
+    local upstream=$(git ls-remote --heads origin "$branch" | awk '{print $1}')
+    local installed=$(git rev-parse "$branch")
     [ "$upstream" == "$installed" ] || {
       git pull -q
       local commits=$(git rev-list --left-only --count "$upstream"..."$installed")
@@ -109,7 +109,7 @@ install_missing_plugins() {
 }
 
 uninstall_unwanted_plugins() {
-  for dir in $PLUGINS_DIR/*; do
+  for dir in "$PLUGINS_DIR"/*; do
     uninstall_plugin "$dir"
   done
 }
@@ -146,7 +146,7 @@ update)
   else
     quiet=0
   fi
-  for dir in $PLUGINS_DIR/*; do
+  for dir in "$PLUGINS_DIR"/*; do
     plugin_name=${dir##*/}
     [ -n "$1" ] && [ "$1" != "$plugin_name" ] && continue
     update_plugin "$dir" $quiet &
