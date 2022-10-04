@@ -121,7 +121,7 @@ update_help_tags() {
     local cmd=vim
   fi
 
-  $cmd -c 'helptags ALL' -c 'quit' >/dev/null
+  $cmd -c 'helptags ALL' -c 'quit' 1>/dev/null 2>/dev/null
 }
 
 case $action in
