@@ -66,7 +66,7 @@ install_plugin() {
     if [[ -n "$repo" ]]; then
       git clone --depth 1 "$repo" "$PLUGINS_DIR/$plugin_name" >/dev/null 2>&1
     else
-      ln -nfs "$line" "$PLUGINS_DIR/$plugin_name"
+      ln -nfs "${line/#\~/$HOME}" "$PLUGINS_DIR/$plugin_name"
     fi
     echo "installed $plugin_name"
   }
