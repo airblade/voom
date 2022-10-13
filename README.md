@@ -92,6 +92,8 @@ https://gitlab.com/hugoh/vim-auto-obsession
 
 # Declare repos on your file system with the absolute path.
 /Users/andy/code/src/vim-gitgutter
+# Or with a tilde path.
+~/code/src/vim-rooter
 ```
 
 Run `voom` without arguments to install and uninstall plugins as necessary to match your manifest.
