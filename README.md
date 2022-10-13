@@ -98,7 +98,7 @@ https://gitlab.com/hugoh/vim-auto-obsession
 
 Run `voom` without arguments to install and uninstall plugins as necessary to match your manifest.
 
-To update your (GitHub-hosted) plugins:
+To update your online plugins:
 
 ```sh
 $ voom update
@@ -124,12 +124,12 @@ Restart Vim to pick up changes to your plugins.
 
 When `voom` installs a plugin:
 
-- GitHub-hosted: `voom` clones it [1] into `~/.vim/pack/voom/start/`.
+- online: `voom` clones it [1] into `~/.vim/pack/voom/start/`.
 - local: `voom` symlinks it into `~/.vim/pack/voom/start/`.
 
 When `voom` uninstalls a plugin:
 
-- GitHub-hosted: `voom` removes the directory from `~/.vim/pack/voom/start/`.
+- online: `voom` removes the directory from `~/.vim/pack/voom/start/`.
 - local: `voom` removes the symlink from `~/.vim/pack/voom/start/`.
 
 [1] `voom` performs a shallow clone of depth 1.  If you subsequently want a repo's full history, do `git pull --unshallow`.
