@@ -76,7 +76,7 @@ uninstall_plugin() {
   local dir="$1"
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" "$MANIFEST" | grep -q "/$plugin_name") || {
+  (grep -v "$COMMENT" "$MANIFEST" | grep -q "/${plugin_name}$") || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
