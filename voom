@@ -14,25 +14,29 @@
 #   2. Run `voom` to install/uninstall; `voom update` to update already-installed plugins.
 #
 
+set -euo pipefail
+shopt -s inherit_errexit nullglob
 
-set -e
+cd
 
-if [ -n "$VIM_BUNDLE_DIR" ]; then
+if [[ -n "${VIM_BUNDLE_DIR:-}" ]]; then
   echo VIM_BUNDLE_DIR is deprecated. Please use VIM_PLUGINS_DIR instead.
   PLUGINS_DIR="$VIM_BUNDLE_DIR"
 fi
+
+USAGE="Usage: $(basename "$0") [update [-q] <name>] [edit]"
 
 VIM_DIR="${VIM_DIR:-$HOME/.vim}"
 MANIFEST="$VIM_DIR/plugins"
 PLUGINS_DIR="${VIM_PLUGINS_DIR:-$VIM_DIR/pack/voom/start}"
 COMMENT='^#'
-action="$1"
+GIT_REMOTE='^[^:/]+:'
+GITHUB_REMOTE='^[^/]+/[^/]+$'
 
-
-test -f "$MANIFEST" || {
+if ! test -f "$MANIFEST"; then
   echo >&2 "Could not locate '$MANIFEST'."
   exit 1
-}
+fi
 
 is_nvim() {
   if [[ $VIM_DIR =~ nvim ]]; then
@@ -48,69 +52,90 @@ edit_manifest() {
 
 remote_repo() {
   local repo=$1
-  [[ $repo = http://* || $repo = https://* ]] && printf "%s.git" "$repo" && return
-  local slashes="${repo//[^\/]}"
-  local count="${#slashes}"
-  [ "$count" -eq 1 ] && printf "https://github.com/%s.git" "$repo" && return
+  if [[ "$repo" =~ $GITHUB_REMOTE ]]; then
+    printf "https://github.com/%s.git" "$repo"
+  elif [[ "$repo" =~ $GIT_REMOTE ]]; then
+    printf "%s" "$repo"
+  fi
   # Otherwise, it's a local repo
 }
 
 install_plugin() {
   local line="$1"
-  ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && return
+  [[ -z "$line" ]] && return
+  [[ "$line" =~ $COMMENT ]] && return
 
   local plugin_name=${line##*/}
 
-  [ -d "$PLUGINS_DIR/$plugin_name" ] || {
-    local repo=$(remote_repo "$line")
+  if ! [[ -d "$PLUGINS_DIR/$plugin_name" ]]; then
+    local repo
+    repo=$(remote_repo "$line")
     if [[ -n "$repo" ]]; then
       git clone --depth 1 "$repo" "$PLUGINS_DIR/$plugin_name" >/dev/null 2>&1
     else
       ln -nfs "${line/#\~/$HOME}" "$PLUGINS_DIR/$plugin_name"
     fi
     echo "installed $plugin_name"
-  }
+  fi
 }
 
 uninstall_plugin() {
   local dir="$1"
-  [ -z "$dir" ] && return 1
-  plugin_name=${dir##*/}
-  (grep -v "$COMMENT" "$MANIFEST" | grep -q "/${plugin_name}$") || {
+  [[ -z "$dir" ]] && return 1
+  local plugin_name=${dir##*/} plugin_remote
+  plugin_remote=$(remote_repo "$(grep -v "$COMMENT" "$MANIFEST" | grep "/$plugin_name\$")")
+
+  local remove=0
+  if ! ((remove)); then
+    [[ -z "$plugin_remote" ]] && remove=1
+  fi
+  if ! ((remove)); then
+    pushd "$dir" >/dev/null
+    [[ -d .git ]] && [[ "$(git remote get-url origin)" != "$plugin_remote" ]] && remove=1
+    popd >/dev/null
+  fi
+  if ((remove)); then
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
-  }
+  fi
 }
 
 update_plugin() {
   local dir="$1"
-  local quiet="$2"
+  local quiet="${2:-0}"
   local plugin_name=${dir##*/}
-  [ -L "$dir" ] || {
-    cd "$dir"
-    local branch=$(git symbolic-ref --short HEAD)
-    local upstream=$(git ls-remote --heads origin "$branch" | awk '{print $1}')
-    local installed=$(git rev-parse "$branch")
-    [ "$upstream" == "$installed" ] || {
-      git pull -q
-      local commits=$(git rev-list --left-only --count "$upstream"..."$installed")
-      local log
-      [ "$quiet" != 1 ] && log="$(git log --oneline "$installed".."$upstream")\n\n"
+  if ! [[ -L "$dir" ]]; then
+    pushd "$dir" >/dev/null
+    local branch upstream installed
+    branch=$(git symbolic-ref --short HEAD)
+    upstream=$(git ls-remote --heads origin "$branch" | awk '{print $ 1}')
+    installed=$(git rev-parse "$branch")
+    if ! [[ "$upstream" == "$installed" ]]; then
+      if ! git pull -q; then
+        git fetch -q origin
+        git reset -q --hard origin/HEAD
+      fi
+      local commits log=""
+      commits=$(git rev-list --left-only --count "$upstream"..."$installed")
+      if ! ((quiet)); then
+        log="$(git log --oneline "$installed".."$upstream")\n\n"
+      fi
       printf "updated %s: %i commit(s)\n%b" "$plugin_name" "$commits" "$log"
-    }
-  }
+    fi
+    popd >/dev/null
+  fi
 }
 
 install_missing_plugins() {
   while read -r line; do
     install_plugin "$line" &
-  done < "$MANIFEST"
+  done <"$MANIFEST"
   wait
 }
 
 uninstall_unwanted_plugins() {
-  for dir in "$PLUGINS_DIR"/*; do
-    uninstall_plugin "$dir"
+  for dir in "$PLUGINS_DIR"/*/; do
+    uninstall_plugin "${dir%/}"
   done
 }
 
@@ -124,44 +149,65 @@ update_help_tags() {
   $cmd -c 'helptags ALL' -c 'quit' 1>/dev/null 2>/dev/null
 }
 
-case $action in
+args=()
+for arg; do
+  case "$arg" in
+  --help)
+    args+=(-h)
+    ;;
+  --*)
+    action=error
+    ;;
+  -*)
+    args=("$arg" "${args[@]}")
+    ;;
+  *)
+    args+=("$arg")
+    ;;
+  esac
+done
+set -- "${args[@]}"
+
+quiet=0
+while getopts 'hq' arg; do
+  case "$arg" in
+  q)
+    quiet=1
+    ;;
+  h | ?)
+    action=help
+    ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+case ${action:=${1:-}} in
 '')
-  install_missing_plugins
   uninstall_unwanted_plugins
+  install_missing_plugins
   update_help_tags
   ;;
-
 edit)
   edit_manifest
   install_missing_plugins
   uninstall_unwanted_plugins
   update_help_tags
   ;;
-
 update)
   shift
-  if [[ "$1" = "-q" ]]; then
-    quiet=1
-    shift
-  else
-    quiet=0
-  fi
   for dir in "$PLUGINS_DIR"/*; do
     plugin_name=${dir##*/}
-    [ -n "$1" ] && [ "$1" != "$plugin_name" ] && continue
+    [[ -n "${1:-}" ]] && [[ "${1:-}" != "$plugin_name" ]] && continue
     update_plugin "$dir" $quiet &
   done
   wait
   update_help_tags
   ;;
-
 help | --help | -h)
-  echo "Usage: $(basename "$0") [update [-q] <name>] [edit]"
+  echo "$USAGE"
   ;;
-
 *)
-  echo >&2 "Usage: $(basename "$0") [update [-q] <name>] [edit]"
+  echo >&2 "$USAGE"
   exit 1
   ;;
 esac
-
