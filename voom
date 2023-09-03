@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 #
 # A Vim plugin manager designed to work with Vim 8 packages (or vim-pathogen).
 #
@@ -25,7 +25,7 @@ fi
 VIM_DIR="${VIM_DIR:-$HOME/.vim}"
 MANIFEST="$VIM_DIR/plugins"
 PLUGINS_DIR="${VIM_PLUGINS_DIR:-$VIM_DIR/pack/voom/start}"
-COMMENT='^#'
+COMMENT='#'
 action="$1"
 
 
@@ -35,11 +35,7 @@ test -f "$MANIFEST" || {
 }
 
 is_nvim() {
-  if [[ $VIM_DIR =~ nvim ]]; then
-    return 0
-  else
-    return 1
-  fi
+  test -z "${VIM_DIR##*nvim*}"
 }
 
 edit_manifest() {
@@ -48,7 +44,7 @@ edit_manifest() {
 
 remote_repo() {
   local repo=$1
-  [[ $repo = http://* || $repo = https://* ]] && printf "%s.git" "$repo" && return
+  case $repo in http://*|https://*) printf "%s.git" "$repo" && return ;; esac
   local slashes="${repo//[^\/]}"
   local count="${#slashes}"
   [ "$count" -eq 1 ] && printf "https://github.com/%s.git" "$repo" && return
@@ -57,13 +53,13 @@ remote_repo() {
 
 install_plugin() {
   local line="$1"
-  ([ -z "$line" ] || [[ "$line" =~ $COMMENT ]]) && return
+  case $line in ""|$COMMENT*) return;; esac
 
   local plugin_name=${line##*/}
 
   [ -d "$PLUGINS_DIR/$plugin_name" ] || {
     local repo=$(remote_repo "$line")
-    if [[ -n "$repo" ]]; then
+    if [ -n "$repo" ]; then
       git clone --depth 1 "$repo" "$PLUGINS_DIR/$plugin_name" >/dev/null 2>&1
     else
       ln -nfs "${line/#\~/$HOME}" "$PLUGINS_DIR/$plugin_name"
@@ -76,7 +72,7 @@ uninstall_plugin() {
   local dir="$1"
   [ -z "$dir" ] && return 1
   plugin_name=${dir##*/}
-  (grep -v "$COMMENT" "$MANIFEST" | grep -q "/${plugin_name}$") || {
+  (grep -v "^$COMMENT" "$MANIFEST" | grep -q "/${plugin_name}$") || {
     rm -rf "$dir"
     echo "uninstalled $plugin_name"
   }
@@ -91,7 +87,7 @@ update_plugin() {
     local branch=$(git symbolic-ref --short HEAD)
     local upstream=$(git ls-remote --heads origin "$branch" | awk '{print $1}')
     local installed=$(git rev-parse "$branch")
-    [ "$upstream" == "$installed" ] || {
+    [ "$upstream" = "$installed" ] || {
       git pull -q
       local commits=$(git rev-list --left-only --count "$upstream"..."$installed")
       local log
@@ -140,7 +136,7 @@ edit)
 
 update)
   shift
-  if [[ "$1" = "-q" ]]; then
+  if [ "$1" = "-q" ]; then
     quiet=1
     shift
   else
