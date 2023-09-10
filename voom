@@ -45,9 +45,7 @@ edit_manifest() {
 remote_repo() {
   local repo=$1
   case $repo in http://*|https://*) printf "%s.git" "$repo" && return ;; esac
-  local slashes="${repo//[^\/]}"
-  local count="${#slashes}"
-  [ "$count" -eq 1 ] && printf "https://github.com/%s.git" "$repo" && return
+  [ "${repo%%/*/*}" = "$repo" ] && printf "https://github.com/%s.git" "$repo" && return
   # Otherwise, it's a local repo
 }
 
@@ -62,7 +60,7 @@ install_plugin() {
     if [ -n "$repo" ]; then
       git clone --depth 1 "$repo" "$PLUGINS_DIR/$plugin_name" >/dev/null 2>&1
     else
-      ln -nfs "${line/#\~/$HOME}" "$PLUGINS_DIR/$plugin_name"
+      ln -nfs "$(realpath $line)" "$PLUGINS_DIR/$plugin_name"
     fi
     echo "installed $plugin_name"
   }
