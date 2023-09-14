@@ -12,7 +12,7 @@ voom is an alternative to [vim-plug][], [Vundle][], [NeoBundle][], [vam][], [Viz
 Features:
 
 * Fast: plugins are installed in parallel.
-* Lightweight (100 lines of bash).
+* Lightweight (100 lines of POSIX shell).
 * No git submodules :)
 
 
