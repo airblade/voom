@@ -22,8 +22,12 @@ if [ -n "$VIM_BUNDLE_DIR" ]; then
   PLUGINS_DIR="$VIM_BUNDLE_DIR"
 fi
 
-VIM_DIR="${VIM_DIR:-$HOME/.vim}"
-MANIFEST="$VIM_DIR/plugins"
+MANIFEST="$(find -L "$VIM_DIR/plugins" "$HOME/.vim/plugins" \
+  "${XDG_CONFIG_HOME:-$HOME/.config}/vim/plugins" \
+  -maxdepth 0 -type f -readable 2>/dev/null | head -n1)"
+
+VIM_DIR="$(dirname "$MANIFEST")"
+
 PLUGINS_DIR="${VIM_PLUGINS_DIR:-$VIM_DIR/pack/voom/start}"
 COMMENT='#'
 action="$1"
