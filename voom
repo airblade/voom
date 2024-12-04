@@ -22,8 +22,14 @@ if [ -n "$VIM_BUNDLE_DIR" ]; then
   PLUGINS_DIR="$VIM_BUNDLE_DIR"
 fi
 
-VIM_DIR="${VIM_DIR:-$HOME/.vim}"
-MANIFEST="$VIM_DIR/plugins"
+for dir in "${VIM_DIR:-$HOME/.vim}" "${XDG_CONFIG_HOME:-$HOME/.config}/vim"; do
+  VIM_DIR="$dir"
+  MANIFEST="$dir/plugins"
+  if [ -r "$MANIFEST" ]; then
+    break
+  fi
+done
+
 PLUGINS_DIR="${VIM_PLUGINS_DIR:-$VIM_DIR/pack/voom/start}"
 COMMENT='#'
 action="$1"
