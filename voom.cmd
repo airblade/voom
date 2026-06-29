@@ -32,9 +32,11 @@ setlocal
 	if not exist %VIM_PLUGINS_DIR% mkdir %VIM_PLUGINS_DIR%
 
 	cd "%VIM_PLUGINS_DIR%"
+
+	REM WARNING: One empty line and %%d should be present
 	for /d %%d in (. "*") do set dirs=!dirs!^
 
-	%%d
+%%d
 
 	for /f "tokens=*" %%j in ('type "%VOOM_MANIFEST%" ^| findstr /v "^#" ^| sort') do (
 		for %%I in ("%%j") do set "reponame=%%~nxI"
@@ -44,26 +46,29 @@ setlocal
 			exit /b 1
 		)
 
+		if not exist "!reponame!/.git" (
+			REM WARNING: One empty line and %%d should be present
+			set dirs=!dirs:^
+
+%%d=!
+			set jtmp=%%j
+			echo v %%j
+			if not "y!jtmp:://=!!jtmp:@=!"=="y!jtmp!!jtmp!" (
+				git clone -q "%%j"
+			) else (
+				git clone -q "%VOOM_DEFAULT_PROVIDER%/%%j"
+			)
+			if ERRORLEVEL 1 (
+				exit /b 1
+			)
+		)
+
 		for /f "tokens=*" %%d in ("!dirs!") do (
-
 			if "%%d"=="!reponame!" (
+				REM WARNING: One empty line and %%d should be present
 				set dirs=!dirs:^
 
-	%%d=!
-			) else if not exist "!reponame!/.git" (
-				set dirs=!dirs:^
-
-	%%d=!
-				set jtmp=%%j
-				echo v %%j
-				if not "y!jtmp:://=!!jtmp:@=!"=="y!jtmp!!jtmp!" (
-					git clone -q "%%j"
-				) else (
-					git clone -q "%VOOM_DEFAULT_PROVIDER%/%%j"
-				)
-				if ERRORLEVEL 1 (
-					exit /b 1
-				)
+%%d=!
 			)
 		)
 	)
