@@ -1,4 +1,3 @@
-#!/bin/sh
 #
 # A Vim plugin manager designed to work with Vim 8 packages (or vim-pathogen).
 #
@@ -59,7 +58,7 @@ install_plugin() {
   local line="$1"
   case $line in ""|$COMMENT*) return;; esac
 
-  local plugin_name=${line##*/}
+  local plugin_name=${line#*/}@${line%%/*}
 
   [ -d "$PLUGINS_DIR/$plugin_name" ] || {
     local repo=$(remote_repo "$line")
@@ -69,26 +68,26 @@ install_plugin() {
       case "$line" in ~*) line="$HOME${line##\~}" ;; esac
       ln -nfs "$(realpath $line)" "$PLUGINS_DIR/$plugin_name"
     fi
-    echo "installed $plugin_name"
+    echo "installed $line"
   }
 }
 
 uninstall_plugin() {
-  local dir="$1"
-  [ -z "$dir" ] && return 1
-  plugin_name=${dir##*/}
-  (grep -v "^$COMMENT" "$MANIFEST" | grep -q "/${plugin_name}$") || {
-    rm -rf "$dir"
+  [ -z "$1" ] && return 1
+  local dir=${1##*/}
+  local plugin_name=${dir##*@}/${dir%%@*}
+  (grep -v "^$COMMENT" "$MANIFEST" | grep -q "${plugin_name}") || {
+    rm -rf "$1"
     echo "uninstalled $plugin_name"
   }
 }
 
 update_plugin() {
-  local dir="$1"
-  local quiet="$2"
-  local plugin_name=${dir##*/}
-  [ -L "$dir" ] || {
-    cd "$dir"
+  [ -L "$1" ] || {
+    cd "$1"
+    local dir=${1##*/}
+    local quiet="$2"
+    local plugin_name=${dir##*@}/${dir%%@*}
     local branch=$(git symbolic-ref --short HEAD)
     local upstream=$(git ls-remote --heads origin "$branch" | awk '{print $1}')
     local installed=$(git rev-parse "$branch")
